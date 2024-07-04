@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Recommended Movies</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-color: black;
+            color : white;
+        }
+        #myChart, #myBar {
+            background-color : white;
+            max-width: 1000px;
+            max-height: 1000px;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <table class="table table-dark table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Recommended Top 10 Movies for "{{movie_name|title}}"</th>
+                    <th scope="col">Similarity Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in recommendations %}
+                <tr>
+                    <th scope="row"><a href="https://www.themoviedb.org/movie/{{item[2]}}-{{item[0]}}?language=en-US" target="_blank" style="color : white">{{ item[0]|title}}</a></th>
+                    <td>{{ item[1] }}%</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <h2 class="text-center">Similarity Scores Distribution</h2>
+        <canvas id="myChart" width="400" height="400"></canvas>
+        <h2 class="text-center">Similarity by Parameters</h2>
+        <canvas id="myBar" width="700" height="700"></canvas>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const piedata = {
+                labels: [
+                    'High (>40%)',
+                    'Med-High (30% - 39%)',
+                    'Medium (20% - 29%)',
+                    'Med-Low (15% - 19%)',
+                    'Low (<15%)'
+                ],
+                datasets: [{
+                    label: 'Score Distribution',
+                    data: {{ piechart_data | safe }},
+                    backgroundColor: [
+                        'rgb(153, 102, 255)',
+                        'rgb(255, 159, 64)',
+                        'rgb(75, 192, 192)',
+                        'rgb(255, 206, 86)',
+                        'rgb(201, 203, 207)'
+                    ],
+                    hoverOffset: 5
+                }]
+            };
+
+            const pieConfig = {
+                type: 'doughnut',
+                data: piedata,
+                options: {
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Accuracy of Recommendations',
+                            font: {
+                                size: 20
+                            }
+                        }
+                    }
+                }
+            };
+
+            const pieCtx = document.getElementById('myChart').getContext('2d');
+            new Chart(pieCtx, pieConfig);
+
+            const labels = {{ bar_data_l | safe }};
+            const dist_data = {{ bar_data | safe }};
+
+            const descriptionSimilarity = dist_data.map(item => item[0]);
+            const keywordSimilarity = dist_data.map(item => item[1]);
+            const genreSimilarity = dist_data.map(item => item[2]);
+
+            const barConfig = {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Description Similarity',
+                            data: descriptionSimilarity,
+                            backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                        },
+                        {
+                            label: 'Keywords Similarity',
+                            data: keywordSimilarity,
+                            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        },
+                        {
+                            label: 'Genre Similarity',
+                            data: genreSimilarity,
+                            backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                        }
+                    ]
+                },
+                options: {
+                    scales: {
+                        x: {
+
+                            stacked:true
+                        },
+                        y: {
+                            stacked: true
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Similarity of recommended movies to "{{movie_name | title}}" by categories'
+                        }
+                    }
+                }
+            };
+
+            const barCtx = document.getElementById('myBar').getContext('2d');
+            new Chart(barCtx, barConfig);
+        });
+    </script>
+</body>
+</html>

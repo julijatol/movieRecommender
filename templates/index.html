@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Movie Recommender</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+            background-color: black;
+        }
+        .container {
+            max-width: 500px;
+        }
+        .error {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center" style="color : white">Movie Recommender</h1>
+        <form action="/recommend" method="post" class="form-inline justify-content-center mt-4">
+            <input type="text" name="movieName" class="form-control mb-2 mr-sm-2" placeholder="Enter a movie name">
+            <button type="submit" class="btn btn-primary mb-2">Get Recommendations</button>
+        </form>
+    </div>
+    <div class="error text-center">
+        <p id="error_message" style="color : red">{{ error_message }}</p>
+    </div>
+    <div class="container mt-5">
+        <p class="text-center" style="color : white">Movie recommendation system contains movies released between 1990 and 2016.
+        Please note that the collection is not full and will be continuously updated.</p>
+    </div>
+    <!-- <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script> -->
+</body>
+</html>
